@@ -33,7 +33,6 @@ ChartJS.register(
 );
 
 const Dashboard = () => {
-  // Mock data for charts
   const getVariantClasses = (variant) => {
     switch (variant) {
       case 'primary':
@@ -123,10 +122,10 @@ const Dashboard = () => {
         {/* Stats Cards */}
         <Row className="g-4 mb-4">
           {[
-            { title: 'Total Revenue', value: '$45,200', icon: <TrendingUp />, color: 'primary' },
+            { title: 'New Users Today ', value: '145', icon: <Users />, color: 'primary' },
             { title: 'Active Users', value: '1,875', icon: <Users />, color: 'success' },
             { title: 'Pending Jobs', value: '156', icon: <Briefcase />, color: 'warning' },
-            { title: 'Completion Rate', value: '85%', icon: <BarChart2 />, color: 'info' },
+            { title: 'Completed Jobs', value: '85', icon: <BarChart2 />, color: 'info' },
           ].map((stat, idx) => (
             <Col key={idx} xs={12} md={6} lg={3}>
               <Card className="border-0 shadow-sm h-100">
