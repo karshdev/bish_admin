@@ -229,8 +229,8 @@ const Dashboard = () => {
         <Row className="g-4 mb-[20px]">
         {[
   { title: 'Manage Users', icon: <Users size={20} />, variant: 'primary', to: '/users' },
-  { title: 'View Jobs', icon: <Briefcase size={20} />, variant: 'success', to: '/jobs' },
-  { title: 'Active Areas', icon: <MapPin size={20} />, variant: 'info', to: '/areas' },
+  { title: 'View Jobs', icon: <Briefcase size={20} />, variant: 'success', to: '/active-jobs' },
+  { title: 'Active Areas', icon: <MapPin size={20} />, variant: 'info', to: '/jobs' },
   { title: 'Settings', icon: <Settings size={20} />, variant: 'secondary', to: '/settings' },
 ].map((action, idx) => (
   <Col key={idx} xs={12} sm={6} md={3}>
