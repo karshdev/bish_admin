@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Row, Col, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import UserList from '../User List/UserList';
+import ActivePostcode from '../Active PostCodes/ActivePostcode';
 
 const HomePage = () => {
   return (
@@ -61,7 +62,9 @@ const HomePage = () => {
 
             {/* See Jobs Button */}
             <Col xs={12} md={4}>
-              <Button className="w-100 shadow-sm" variant="secondary">See jobs</Button>
+              <Link to='/jobs' element={<ActivePostcode />}>
+                <Button className="w-100 shadow-sm" variant="primary">See Jobs</Button>
+              </Link>
             </Col>
 
             {/* Active Postcodes Button */}
