@@ -1,8 +1,8 @@
 import React from 'react';
 import { Card, Row, Col, Button, Container, Table, ProgressBar } from 'react-bootstrap';
-import { 
-  Users, UserPlus, Briefcase, CheckCircle, MapPin, 
-  TrendingUp, Bell, Search, Settings, BarChart2 
+import {
+  Users, UserPlus, Briefcase, CheckCircle, MapPin,
+  TrendingUp, Bell, Search, Settings, BarChart2
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -111,10 +111,10 @@ const Dashboard = () => {
             <span className="input-group-text bg-white">
               <Search size={20} />
             </span>
-            <input 
-              type="text" 
-              className="form-control" 
-              placeholder="Search..." 
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search..."
             />
           </div>
         </div>
@@ -151,7 +151,7 @@ const Dashboard = () => {
             <Card className="border-0 shadow-sm">
               <Card.Body>
                 <h5 className="mb-4">Performance Overview</h5>
-                <Line 
+                <Line
                   data={monthlyData}
                   options={{
                     responsive: true,
@@ -167,7 +167,7 @@ const Dashboard = () => {
             <Card className="border-0 shadow-sm h-100">
               <Card.Body>
                 <h5 className="mb-4">Jobs Distribution</h5>
-                <Doughnut 
+                <Doughnut
                   data={jobsData}
                   options={{
                     responsive: true,
@@ -210,8 +210,8 @@ const Dashboard = () => {
                           </span>
                         </td>
                         <td style={{ width: '20%' }}>
-                          <ProgressBar 
-                            now={user.progress} 
+                          <ProgressBar
+                            now={user.progress}
                             variant={user.progress > 70 ? 'success' : 'warning'}
                             className="mt-1"
                           />
@@ -227,16 +227,16 @@ const Dashboard = () => {
 
         {/* Quick Actions */}
         <Row className="g-4 mb-[20px]">
-        {[
-  { title: 'Manage Users', icon: <Users size={20} />, variant: 'primary', to: '/users' },
-  { title: 'View Jobs', icon: <Briefcase size={20} />, variant: 'success', to: '/jobs' },
-  { title: 'Active Areas', icon: <MapPin size={20} />, variant: 'info', to: '/areas' },
-  { title: 'Settings', icon: <Settings size={20} />, variant: 'secondary', to: '/settings' },
-].map((action, idx) => (
-  <Col key={idx} xs={12} sm={6} md={3}>
-    <Link
-      to={action.to}
-      className={`
+          {[
+            { title: 'Manage Users', icon: <Users size={20} />, variant: 'primary', to: '/users' },
+            { title: 'View Jobs', icon: <Briefcase size={20} />, variant: 'success', to: '/active-jobs' },
+            { title: 'Active Areas', icon: <MapPin size={20} />, variant: 'info', to: '/postcodes' },
+            { title: 'Settings', icon: <Settings size={20} />, variant: 'secondary', to: '/settings' },
+          ].map((action, idx) => (
+            <Col key={idx} xs={12} sm={6} md={3}>
+              <Link
+                to={action.to}
+                className={`
         w-full 
         py-3 
         px-4 
@@ -252,12 +252,12 @@ const Dashboard = () => {
         active:scale-95
         ${getVariantClasses(action.variant)}
       `}
-    >
-      {action.icon}
-      <span>{action.title}</span>
-    </Link>
-  </Col>
-))}
+              >
+                {action.icon}
+                <span>{action.title}</span>
+              </Link>
+            </Col>
+          ))}
         </Row>
       </Container>
     </div>

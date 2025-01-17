@@ -4,6 +4,13 @@ export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000/api" }),
   endpoints: (builder) => ({
+    createAdmin: builder.mutation({
+      query: (payload) => ({
+        url: "/admin/login",
+        method: "POST",
+        body: payload,
+      }),
+    }),
     createAddress: builder.mutation({
       query: (payload) => ({
         url: "/address",
@@ -20,4 +27,4 @@ export const api = createApi({
   }),
 });
 
-export const { useCreateAddressMutation, useGetAddressQuery, useGetUsersQuery } = api;
+export const { useCreateAddressMutation, useGetAddressQuery, useGetUsersQuery ,useCreateAdminMutation } = api;
