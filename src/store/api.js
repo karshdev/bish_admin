@@ -8,7 +8,7 @@ const getAuthToken = () => {
 export const api = createApi({
   reducerPath: "api",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:5000/api",
+    baseUrl: "https://backend-bish-ig0p.onrender.com//api",
     prepareHeaders: (headers) => {
       const token = getAuthToken();
       if (token) {
