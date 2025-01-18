@@ -1,28 +1,51 @@
 import { useState } from 'react';
-import { Users, Lock, ArrowRight } from 'lucide-react';
+import { Users, Lock, ArrowRight, Loader2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useCreateAdminMutation } from '../store/api';
+
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [errors, setErrors] = useState({});
+  
+  const [createAdmin, { isLoading, error: apiError }] = useCreateAdminMutation();
 
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!email) {
+      newErrors.email = 'Email is required';
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+    
+    if (!password) {
+      newErrors.password = 'Password is required';
+    } else if (password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
-  const VALID_EMAIL = 'admin@example.com';
-  const VALID_PASSWORD = 'admin123';
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-
-
-    if (email === VALID_EMAIL && password === VALID_PASSWORD) {
-
-      navigate('/dashboard');
-    } else {
-
-      setError('Invalid email or password');
+    
+    if (!validateForm()) {
+      return;
+    }
+    
+    try {
+      const response = await createAdmin({ email, password }).unwrap();
+     if(response.success){
+      localStorage.setItem('user', JSON.stringify(response.data));
+      navigate('/dashboard'); 
+     }
+    } catch (err) {
+      console.error('Login failed:', err);
     }
   };
 
@@ -38,14 +61,12 @@ const LoginPage = () => {
           </div>
           <h1 className="text-2xl font-bold text-gray-900">BISH Admin</h1>
           <p className="text-gray-500">Sign in to your account</p>
-
-
         </div>
 
-        {/* Error Message */}
-        {error && (
+        {/* API Error Message */}
+        {apiError && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative text-sm">
-            {error}
+            {apiError?.data?.message || 'An error occurred during login'}
           </div>
         )}
 
@@ -63,12 +84,25 @@ const LoginPage = () => {
                 id="email"
                 type="email"
                 placeholder="Enter your email"
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                className={`w-full pl-10 pr-4 py-2 border rounded-lg outline-none transition-colors ${
+                  errors.email 
+                    ? 'border-red-500 focus:ring-red-500 focus:border-red-500' 
+                    : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                }`}
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errors.email) {
+                    setErrors({ ...errors, email: '' });
+                  }
+                }}
+                disabled={isLoading}
                 required
               />
             </div>
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
 
           {/* Password Field */}
@@ -84,48 +118,45 @@ const LoginPage = () => {
                 id="password"
                 type="password"
                 placeholder="Enter your password"
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-colors"
+                className={`w-full pl-10 pr-4 py-2 border rounded-lg outline-none transition-colors ${
+                  errors.password 
+                    ? 'border-red-500 focus:ring-red-500 focus:border-red-500' 
+                    : 'border-gray-300 focus:ring-blue-500 focus:border-blue-500'
+                }`}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (errors.password) {
+                    setErrors({ ...errors, password: '' });
+                  }
+                }}
+                disabled={isLoading}
                 required
               />
             </div>
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+            )}
           </div>
 
-          {/* Remember Me & Forgot Password */}
-          {/* <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <input
-                id="remember-me"
-                type="checkbox"
-                className="h-4 w-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
-              />
-              <label htmlFor="remember-me" className="ml-2 text-sm text-gray-600">
-                Remember me
-              </label>
-            </div>
-            <a href="#" className="text-sm text-blue-600 hover:text-blue-500">
-              Forgot password?
-            </a>
-          </div> */}
-
-          {/* Submit Button */}
           <button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={isLoading}
           >
-            Sign in
-            <ArrowRight className="h-4 w-4" />
+            {isLoading ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Signing in...
+              </>
+            ) : (
+              <>
+                Sign in
+                <ArrowRight className="h-4 w-4" />
+              </>
+            )}
           </button>
         </form>
-
-        {/* Sign Up Link */}
-        {/* <div className="text-center text-sm">
-          <span className="text-gray-600">Don't have an account? </span>
-          <a href="#" className="text-blue-600 hover:text-blue-500 font-medium">
-            Sign up
-          </a>
-        </div> */}
       </div>
     </div>
   );
