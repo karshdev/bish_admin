@@ -26,7 +26,7 @@ const UserRow = ({ user }) => {
   return (
     <tr className="hover:bg-gray-50">
       <td className="border border-gray-300 p-2 text-center">{formattedDate}</td>
-      <td className="border border-gray-300 p-2 text-center">-</td>
+      <td className="border border-gray-300 p-2 text-center">{user.bishCode}</td>
       <td className="border border-gray-300 p-2 text-center">{user.first_name}</td>
       <td className="border border-gray-300 p-2 text-center">{user.last_name}</td>
       <td className="border border-gray-300 p-2 text-center">{user.postalCode?.postalCode || '-'}</td>
@@ -56,8 +56,10 @@ UserRow.propTypes = {
   user: PropTypes.shape({
     _id: PropTypes.string.isRequired,
     createdAt: PropTypes.string.isRequired,
+    bishCode: PropTypes.string.isRequired,
     first_name: PropTypes.string.isRequired,
     last_name: PropTypes.string.isRequired,
+
     postalCode: PropTypes.shape({
       postalCode: PropTypes.string
     }),
