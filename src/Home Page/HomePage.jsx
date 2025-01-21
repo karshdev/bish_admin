@@ -1,38 +1,29 @@
-import React from 'react';
-import { Card, Row, Col, Button, Container, Table, ProgressBar } from 'react-bootstrap';
+import { Card, Row, Col, Container } from 'react-bootstrap';
 import {
-  Users, UserPlus, Briefcase, CheckCircle, MapPin,
-  TrendingUp, Bell, Search, Settings, BarChart2
+  Users, Briefcase, Bell, Search, Settings, BarChart2, MapPin
 } from 'lucide-react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from 'chart.js';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import { Link } from 'react-router-dom';
+import { useGetDashboardDataQuery } from '../store/api';
 
-// Register ChartJS components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
+const StatCardSkeleton = () => (
+  <div className="animate-pulse h-full rounded-lg bg-gray-100 p-6">
+    <div className="flex justify-between">
+      <div className="space-y-3">
+        <div className="h-4 w-24 bg-gray-200 rounded"></div>
+        <div className="h-6 w-16 bg-gray-300 rounded"></div>
+      </div>
+      <div className="h-12 w-12 bg-gray-200 rounded"></div>
+    </div>
+  </div>
+);
+
+const ActionButtonSkeleton = () => (
+  <div className="animate-pulse h-[52px] rounded-lg bg-gray-200"></div>
 );
 
 const Dashboard = () => {
+  const { data: dashboardData, isLoading, isError } = useGetDashboardDataQuery();
+
   const getVariantClasses = (variant) => {
     switch (variant) {
       case 'primary':
@@ -47,55 +38,62 @@ const Dashboard = () => {
         return 'bg-blue-600 hover:bg-blue-700 text-white';
     }
   };
-  const monthlyData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-    datasets: [
-      {
-        label: 'Revenue',
-        data: [3000, 3500, 4000, 3800, 4200, 4500],
-        borderColor: 'rgb(75, 192, 192)',
-        tension: 0.4,
-        fill: false
-      },
-      {
-        label: 'Users',
-        data: [500, 600, 800, 1200, 1500, 1800],
-        borderColor: 'rgb(255, 99, 132)',
-        tension: 0.4,
-        fill: false
-      }
-    ]
-  };
 
-  const jobsData = {
-    labels: ['Completed', 'In Progress', 'Pending', 'Cancelled'],
-    datasets: [{
-      data: [300, 150, 100, 50],
-      backgroundColor: [
-        'rgba(75, 192, 192, 0.8)',
-        'rgba(255, 206, 86, 0.8)',
-        'rgba(54, 162, 235, 0.8)',
-        'rgba(255, 99, 132, 0.8)',
-      ],
-    }]
-  };
-
-  const recentUsers = [
-    { id: 1, name: 'John Doe', email: 'john@example.com', status: 'Active', progress: 75 },
-    { id: 2, name: 'Jane Smith', email: 'jane@example.com', status: 'Pending', progress: 45 },
-    { id: 3, name: 'Mike Johnson', email: 'mike@example.com', status: 'Active', progress: 90 },
+  const statsData = [
+    { 
+      title: 'New Users Today', 
+      value: isLoading ? '-' : dashboardData?.newUsersToday || 0, 
+      icon: <Users />, 
+      color: 'primary' 
+    },
+    { 
+      title: 'Active Users', 
+      value: isLoading ? '-' : dashboardData?.totalActiveUsers || 0, 
+      icon: <Users />, 
+      color: 'success' 
+    },
+    { 
+      title: 'Pending Jobs', 
+      value: '0', 
+      icon: <Briefcase />, 
+      color: 'warning' 
+    },
+    { 
+      title: 'Completed Jobs', 
+      value: '0', 
+      icon: <BarChart2 />, 
+      color: 'info' 
+    }
   ];
 
+  const quickActions = [
+    { title: 'Manage Users', icon: <Users size={20} />, variant: 'primary', to: '/users' },
+    { title: 'View Jobs', icon: <Briefcase size={20} />, variant: 'success', to: '/active-jobs' },
+    { title: 'Active Areas', icon: <MapPin size={20} />, variant: 'info', to: '/postcodes' },
+    { title: 'Settings', icon: <Settings size={20} />, variant: 'secondary', to: '/settings' }
+  ];
+
+  if (isError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center p-6 bg-red-50 rounded-lg">
+          <h2 className="text-xl font-semibold text-red-600 mb-2">Error Loading Dashboard</h2>
+          <p className="text-gray-600">Please try refreshing the page</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="bg-light min-vh-100">
+    <div className="bg-gray-50 min-h-screen">
       {/* Top Navigation */}
-      <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3 mb-4">
-        <div className="container-fluid">
-          <span className="navbar-brand fw-bold">BISH Admin</span>
-          <div className="d-flex align-items-center">
-            <div className="position-relative me-3">
+      <nav className="bg-blue-600 px-6 py-4 mb-6">
+        <div className="container mx-auto flex justify-between items-center">
+          <span className="text-white font-bold text-xl">BISH Admin</span>
+          <div className="flex items-center gap-4">
+            <div className="relative">
               <Bell size={20} className="text-white" />
-              <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                 3
               </span>
             </div>
@@ -104,158 +102,74 @@ const Dashboard = () => {
         </div>
       </nav>
 
-      <Container fluid className="px-4">
+      <Container fluid className="px-6">
         {/* Search Bar */}
-        <div className="mb-4">
-          <div className="input-group">
-            <span className="input-group-text bg-white">
-              <Search size={20} />
-            </span>
+        <div className="mb-6">
+          <div className="flex items-center bg-white rounded-lg border p-2">
+            <Search size={20} className="text-gray-400 mr-2" />
             <input
               type="text"
-              className="form-control"
+              className="flex-1 border-none focus:outline-none"
               placeholder="Search..."
             />
           </div>
         </div>
 
         {/* Stats Cards */}
-        <Row className="g-4 mb-4">
-          {[
-            { title: 'New Users Today ', value: '145', icon: <Users />, color: 'primary' },
-            { title: 'Active Users', value: '1,875', icon: <Users />, color: 'success' },
-            { title: 'Pending Jobs', value: '156', icon: <Briefcase />, color: 'warning' },
-            { title: 'Completed Jobs', value: '85', icon: <BarChart2 />, color: 'info' },
-          ].map((stat, idx) => (
-            <Col key={idx} xs={12} md={6} lg={3}>
-              <Card className="border-0 shadow-sm h-100">
-                <Card.Body>
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <h6 className="text-muted mb-2">{stat.title}</h6>
-                      <h3 className="mb-0 fw-bold">{stat.value}</h3>
+        <Row className="mb-6">
+          {statsData.map((stat, idx) => (
+            <Col key={idx} xs={12} md={6} lg={3} className="mb-4">
+              {isLoading ? (
+                <StatCardSkeleton />
+              ) : (
+                <Card className="border-0 shadow-sm h-full">
+                  <Card.Body>
+                    <div className="flex justify-between items-center">
+                      <div>
+                        <h6 className="text-gray-600 mb-2">{stat.title}</h6>
+                        <h3 className="text-2xl font-bold">{stat.value}</h3>
+                      </div>
+                      <div className={`bg-${stat.color} bg-opacity-10 p-3 rounded`}>
+                        {stat.icon}
+                      </div>
                     </div>
-                    <div className={`bg-${stat.color} bg-opacity-10 p-3 rounded`}>
-                      {stat.icon}
-                    </div>
-                  </div>
-                </Card.Body>
-              </Card>
+                  </Card.Body>
+                </Card>
+              )}
             </Col>
           ))}
         </Row>
 
-        {/* Charts */}
-        <Row className="g-4 mb-4">
-          <Col lg={8}>
-            <Card className="border-0 shadow-sm">
-              <Card.Body>
-                <h5 className="mb-4">Performance Overview</h5>
-                <Line
-                  data={monthlyData}
-                  options={{
-                    responsive: true,
-                    plugins: {
-                      legend: { position: 'bottom' },
-                    }
-                  }}
-                />
-              </Card.Body>
-            </Card>
-          </Col>
-          <Col lg={4}>
-            <Card className="border-0 shadow-sm h-100">
-              <Card.Body>
-                <h5 className="mb-4">Jobs Distribution</h5>
-                <Doughnut
-                  data={jobsData}
-                  options={{
-                    responsive: true,
-                    plugins: {
-                      legend: { position: 'bottom' },
-                    }
-                  }}
-                />
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-
-        {/* Recent Users Table */}
-        <Row className="mb-4">
-          <Col>
-            <Card className="border-0 shadow-sm">
-              <Card.Body>
-                <div className="d-flex justify-content-between align-items-center mb-4">
-                  <h5 className="mb-0">Recent Users</h5>
-                  <Button variant="outline-primary" size="sm">View All</Button>
-                </div>
-                <Table hover responsive>
-                  <thead>
-                    <tr>
-                      <th>Name</th>
-                      <th>Email</th>
-                      <th>Status</th>
-                      <th>Progress</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentUsers.map(user => (
-                      <tr key={user.id}>
-                        <td>{user.name}</td>
-                        <td>{user.email}</td>
-                        <td>
-                          <span className={`badge bg-${user.status === 'Active' ? 'success' : 'warning'}`}>
-                            {user.status}
-                          </span>
-                        </td>
-                        <td style={{ width: '20%' }}>
-                          <ProgressBar
-                            now={user.progress}
-                            variant={user.progress > 70 ? 'success' : 'warning'}
-                            className="mt-1"
-                          />
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </Table>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-
         {/* Quick Actions */}
-        <Row className="g-4 mb-[20px]">
-          {[
-            { title: 'Manage Users', icon: <Users size={20} />, variant: 'primary', to: '/users' },
-            { title: 'View Jobs', icon: <Briefcase size={20} />, variant: 'success', to: '/active-jobs' },
-            { title: 'Active Areas', icon: <MapPin size={20} />, variant: 'info', to: '/postcodes' },
-            { title: 'Settings', icon: <Settings size={20} />, variant: 'secondary', to: '/settings' },
-          ].map((action, idx) => (
-            <Col key={idx} xs={12} sm={6} md={3}>
-              <Link
-                to={action.to}
-                className={`
-        w-full 
-        py-3 
-        px-4 
-        flex 
-        items-center 
-        justify-center 
-        gap-2 
-        rounded-lg 
-        font-medium 
-        transition-all 
-        duration-200 
-        hover:shadow-md 
-        active:scale-95
-        ${getVariantClasses(action.variant)}
-      `}
-              >
-                {action.icon}
-                <span>{action.title}</span>
-              </Link>
+        <Row className="mb-6">
+          {quickActions.map((action, idx) => (
+            <Col key={idx} xs={12} sm={6} md={3} className="mb-4">
+              {isLoading ? (
+                <ActionButtonSkeleton />
+              ) : (
+                <Link
+                  to={action.to}
+                  className={`
+                    w-full 
+                    py-3 
+                    px-4 
+                    flex 
+                    items-center 
+                    justify-center 
+                    gap-2 
+                    rounded-lg 
+                    font-medium 
+                    transition-all 
+                    duration-200 
+                    hover:shadow-md 
+                    active:scale-95
+                    ${getVariantClasses(action.variant)}
+                  `}
+                >
+                  {action.icon}
+                  <span>{action.title}</span>
+                </Link>
+              )}
             </Col>
           ))}
         </Row>

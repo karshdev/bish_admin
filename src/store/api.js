@@ -41,6 +41,11 @@ export const api = createApi({
     getUsers: builder.query({
       query: () => "/users",
     }),
+
+    getDashboardData: builder.query({
+      query: () => "/dashboard/users",
+    }),
+
     deleteAddress: builder.mutation({
       query: (id) => ({
         url: `/address/${id}`,
@@ -57,4 +62,5 @@ export const {
   useGetUsersQuery,
   useCreateAdminMutation,
   useDeleteAddressMutation,
+  useGetDashboardDataQuery
 } = api;
