@@ -39,16 +39,18 @@ const Dashboard = () => {
     }
   };
 
+  console.log("dashboard Daa",dashboardData);
+  
   const statsData = [
     { 
       title: 'New Users Today', 
-      value: isLoading ? '-' : dashboardData?.newUsersToday || 0, 
+      value: isLoading ? '-' : dashboardData?.data?.newUsersToday || 0, 
       icon: <Users />, 
       color: 'primary' 
     },
     { 
       title: 'Active Users', 
-      value: isLoading ? '-' : dashboardData?.totalActiveUsers || 0, 
+      value: isLoading ? '-' : dashboardData?.data?.totalActiveUsers || 0, 
       icon: <Users />, 
       color: 'success' 
     },
